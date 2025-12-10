@@ -1,0 +1,118 @@
+# 🏥 Subway Builder Savefile Doctor
+
+> *"If Young Metro don't trust your save file, I'm gon' restore it"*
+
+A beautiful TUI (Text User Interface) tool for editing Subway Builder save files. Metro Boomin want some more... trains.
+
+## Features
+
+- 💰 **Edit Money** - Give yourself unlimited cash
+- ⏱️ **Edit Game Time** - Change elapsed simulation time
+- 🚆 **Edit Train Count** - Change owned train count
+- 🎫 **Edit Transit Cost** - Change ticket price for riders
+- 💾 **Auto Backup** - Creates backups before modifying
+- 📦 **Binary Format Support** - Handles both JSON and .metro binary saves
+- ✨ **Beautiful TUI** - Interactive terminal interface with colors
+
+## Installation
+
+```bash
+git clone https://github.com/ejfox/metro-savefile-doctor.git
+cd metro-savefile-doctor
+npm install
+```
+
+## Usage
+
+### Basic Usage
+
+```bash
+# Edit a .metro binary save file (creates backup automatically)
+npm start -- ~/Documents/SubwayBuilder/my-save.metro
+
+# Or edit a JSON save file
+npm start -- ~/path/to/your-save.json
+```
+
+### Advanced Options
+
+```bash
+# Save to a different file
+npm start -- my-save.json --output modified-save.json
+
+# Don't create backup
+npm start -- my-save.json --no-backup
+
+# Install globally
+npm link
+metro-savefile-doctor ~/saves/my-save.json
+```
+
+## Controls
+
+- **Arrow Keys** - Navigate menu
+- **Enter** - Edit selected field
+- **Escape** - Cancel editing
+- **s** - Save changes
+- **q** - Quit (without saving if you haven't pressed 's')
+
+## Examples
+
+### Give Yourself Money
+
+1. Run the tool: `npm start -- my-save.metro`
+2. Select "💰 Money"
+3. Enter new amount (e.g., `999999999`)
+4. Press Enter
+5. Press 's' to save
+
+### Fix Train Count
+
+1. Run the tool: `npm start -- my-save.metro`
+2. Select "🚆 Owned Trains"
+3. Enter new count (e.g., `100`)
+4. Press Enter
+5. Press 's' to save
+
+## Safety
+
+- **Automatic Backups**: By default, creates `.backup` file before modifying
+- **Validation**: Checks file format before editing
+- **Non-Destructive**: Original file preserved unless you save changes
+
+## Requirements
+
+- Node.js 18+
+- Subway Builder save file (.metro binary or JSON format)
+
+## Supported Formats
+
+- **📦 .metro files** - Binary format with 4KB header, compressed game data, and metadata
+- **📄 JSON files** - Plain JSON save files
+
+The tool automatically detects the format and handles both seamlessly.
+
+## Troubleshooting
+
+**"Invalid save file format"**
+- Make sure you're using a Subway Builder save file
+- File must be valid JSON with `data` and `version` fields
+
+**"File not found"**
+- Check the file path is correct
+- Use absolute paths or relative to current directory
+
+## Technical Details
+
+Built with:
+- [Ink](https://github.com/vadimdemedes/ink) - React for CLIs
+- [Chalk](https://github.com/chalk/chalk) - Terminal colors
+- [Meow](https://github.com/sindresorhus/meow) - CLI argument parsing
+
+## License
+
+MIT
+
+---
+
+*Young Metro trusted this repo ✓*
