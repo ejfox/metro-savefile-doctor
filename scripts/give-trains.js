@@ -9,9 +9,9 @@ const TRAIN_COUNT = 100;
 
 // Apply changes
 const current = save.data.ownedTrainCount || 0;
-log("Current trains:", current);
+log('Current trains:', current);
 
 save.data.ownedTrainCount = current + TRAIN_COUNT;
 
-log("New train count:", save.data.ownedTrainCount);
-log("Added", TRAIN_COUNT, "trains to your fleet!");
+log('New train count:', save.data.ownedTrainCount);
+log('Added', TRAIN_COUNT, 'trains to your fleet!');

@@ -1,8 +1,6 @@
 # 🏥 Subway Builder Savefile Doctor
 
-> *"If Young Metro don't trust your save file, I'm gon' restore it"*
-
-A beautiful TUI (Text User Interface) tool for editing Subway Builder save files. Metro Boomin want some more... trains.
+A beautiful TUI (Text User Interface) tool for editing Subway Builder save files.
 
 ## Features
 
@@ -17,9 +15,9 @@ A beautiful TUI (Text User Interface) tool for editing Subway Builder save files
 ## Installation
 
 ```bash
-git clone https://github.com/ejfox/metro-savefile-doctor.git
-cd metro-savefile-doctor
+cd tools/savefile-doctor
 npm install
+chmod +x cli.js
 ```
 
 ## Usage
@@ -28,24 +26,24 @@ npm install
 
 ```bash
 # Edit a .metro binary save file (creates backup automatically)
-npm start -- ~/Documents/SubwayBuilder/my-save.metro
+./cli.js ~/Documents/SubwayBuilder/my-save.metro
 
 # Or edit a JSON save file
-npm start -- ~/path/to/your-save.json
+./cli.js ~/path/to/your-save.json
 ```
 
 ### Advanced Options
 
 ```bash
 # Save to a different file
-npm start -- my-save.json --output modified-save.json
+./cli.js my-save.json --output modified-save.json
 
 # Don't create backup
-npm start -- my-save.json --no-backup
+./cli.js my-save.json --no-backup
 
 # Install globally
 npm link
-metro-savefile-doctor ~/saves/my-save.json
+savefile-doctor ~/saves/my-save.json
 ```
 
 ## Controls
@@ -60,7 +58,7 @@ metro-savefile-doctor ~/saves/my-save.json
 
 ### Give Yourself Money
 
-1. Run the tool: `npm start -- my-save.metro`
+1. Run the tool: `./cli.js my-save.metro`
 2. Select "💰 Money"
 3. Enter new amount (e.g., `999999999`)
 4. Press Enter
@@ -68,7 +66,7 @@ metro-savefile-doctor ~/saves/my-save.json
 
 ### Fix Train Count
 
-1. Run the tool: `npm start -- my-save.metro`
+1. Run the tool: `./cli.js my-save.metro`
 2. Select "🚆 Owned Trains"
 3. Enter new count (e.g., `100`)
 4. Press Enter
@@ -95,16 +93,19 @@ The tool automatically detects the format and handles both seamlessly.
 ## Troubleshooting
 
 **"Invalid save file format"**
+
 - Make sure you're using a Subway Builder save file
 - File must be valid JSON with `data` and `version` fields
 
 **"File not found"**
+
 - Check the file path is correct
 - Use absolute paths or relative to current directory
 
 ## Technical Details
 
 Built with:
+
 - [Ink](https://github.com/vadimdemedes/ink) - React for CLIs
 - [Chalk](https://github.com/chalk/chalk) - Terminal colors
 - [Meow](https://github.com/sindresorhus/meow) - CLI argument parsing
@@ -112,7 +113,3 @@ Built with:
 ## License
 
 MIT
-
----
-
-*Young Metro trusted this repo ✓*

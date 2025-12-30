@@ -5,9 +5,9 @@
  * No external dependencies required - uses Node's built-in vm module.
  */
 
-import * as vm from 'vm';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import * as vm from 'vm';
 
 export interface SaveData {
     id: string;
@@ -118,10 +118,7 @@ function createHelpers() {
 /**
  * Execute a JavaScript script with access to save data
  */
-export async function runJSScript(
-    scriptPath: string,
-    saveData: SaveData
-): Promise<ScriptResult> {
+export async function runJSScript(scriptPath: string, saveData: SaveData): Promise<ScriptResult> {
     const logs: string[] = [];
     const warnings: string[] = [];
     const errors: string[] = [];
@@ -136,17 +133,17 @@ export async function runJSScript(
 
         // Logging functions
         log: (...args: any[]) => {
-            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ');
+            const msg = args.map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a))).join(' ');
             logs.push(msg);
             console.log(`[Script] ${msg}`);
         },
         warn: (...args: any[]) => {
-            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ');
+            const msg = args.map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a))).join(' ');
             warnings.push(msg);
             console.warn(`[Script] ${msg}`);
         },
         error: (...args: any[]) => {
-            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ');
+            const msg = args.map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a))).join(' ');
             errors.push(msg);
             console.error(`[Script] ${msg}`);
         },
@@ -230,10 +227,7 @@ export async function validateJSScript(scriptPath: string): Promise<{
 /**
  * Run a script string directly (for REPL/interactive use)
  */
-export function runJSScriptString(
-    scriptCode: string,
-    saveData: SaveData
-): ScriptResult {
+export function runJSScriptString(scriptCode: string, saveData: SaveData): ScriptResult {
     const logs: string[] = [];
     const warnings: string[] = [];
     const errors: string[] = [];
@@ -243,22 +237,28 @@ export function runJSScriptString(
     const context = {
         save: workingSave,
         log: (...args: any[]) => {
-            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ');
+            const msg = args.map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a))).join(' ');
             logs.push(msg);
         },
         warn: (...args: any[]) => {
-            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ');
+            const msg = args.map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a))).join(' ');
             warnings.push(msg);
         },
         error: (...args: any[]) => {
-            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ');
+            const msg = args.map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a))).join(' ');
             errors.push(msg);
         },
         ...createHelpers(),
         console: {
-            log: (...args: any[]) => { logs.push(args.join(' ')); },
-            warn: (...args: any[]) => { warnings.push(args.join(' ')); },
-            error: (...args: any[]) => { errors.push(args.join(' ')); },
+            log: (...args: any[]) => {
+                logs.push(args.join(' '));
+            },
+            warn: (...args: any[]) => {
+                warnings.push(args.join(' '));
+            },
+            error: (...args: any[]) => {
+                errors.push(args.join(' '));
+            },
         },
         JSON,
         Math,

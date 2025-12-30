@@ -45,14 +45,10 @@ export interface ScriptContext {
 /**
  * Execute a Lua script with access to save data
  */
-export async function runLuaScript(
-    scriptPath: string,
-    saveData: SaveData
-): Promise<SaveData> {
+export async function runLuaScript(scriptPath: string, saveData: SaveData): Promise<SaveData> {
     if (!fengari) {
         throw new Error(
-            'Lua scripting requires fengari. Install with: npm install fengari\n' +
-            'Or use the TUI editor instead.'
+            'Lua scripting requires fengari. Install with: npm install fengari\n' + 'Or use the TUI editor instead.'
         );
     }
 
@@ -245,7 +241,6 @@ export async function runLuaScript(
         }
 
         return workingSave;
-
     } finally {
         lua.lua_close(L);
     }
@@ -261,7 +256,7 @@ export async function validateLuaScript(scriptPath: string): Promise<{
     if (!fengari) {
         return {
             valid: false,
-            error: 'Lua scripting requires fengari. Install with: npm install fengari'
+            error: 'Lua scripting requires fengari. Install with: npm install fengari',
         };
     }
 

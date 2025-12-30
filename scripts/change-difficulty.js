@@ -5,19 +5,19 @@
  */
 
 // Configuration
-const NEW_MODE = "easy"; // Options: "easy", "normal", "hard"
+const NEW_MODE = 'easy'; // Options: "easy", "normal", "hard"
 
 // Validate mode
-const validModes = ["easy", "normal", "hard"];
+const validModes = ['easy', 'normal', 'hard'];
 if (!validModes.includes(NEW_MODE)) {
-    error("Invalid game mode:", NEW_MODE, "(must be easy, normal, or hard)");
+    error('Invalid game mode:', NEW_MODE, '(must be easy, normal, or hard)');
 } else {
     // Apply changes
-    const current = save.data.gameMode || "normal";
-    log("Current difficulty:", current);
+    const current = save.data.gameMode || 'normal';
+    log('Current difficulty:', current);
 
     save.data.gameMode = NEW_MODE;
 
-    log("New difficulty:", NEW_MODE);
-    log("Difficulty changed!");
+    log('New difficulty:', NEW_MODE);
+    log('Difficulty changed!');
 }

@@ -1,39 +1,36 @@
 {
-  "name": "metro-savefile-doctor",
-  "version": "1.0.0",
-  "description": "TUI tool for editing Subway Builder save files",
-  "type": "module",
-  "bin": {
-    "metro-savefile-doctor": "./cli.js"
-  },
-  "scripts": {
-    "start": "tsx cli.tsx",
-    "dev": "tsx watch cli.tsx",
-    "build": "esbuild cli.tsx ui.tsx --bundle --platform=node --format=esm --outdir=dist"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ejfox/metro-savefile-doctor.git"
-  },
-  "keywords": ["metro-maker", "savefile", "editor", "tui", "ink", "cli"],
-  "author": "EJ Fox",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ejfox/metro-savefile-doctor/issues"
-  },
-  "homepage": "https://github.com/ejfox/metro-savefile-doctor#readme",
-  "dependencies": {
-    "ink": "^5.0.1",
-    "ink-text-input": "^6.0.0",
-    "ink-select-input": "^6.0.0",
-    "react": "^18.3.1",
-    "meow": "^13.2.0",
-    "chalk": "^5.3.0"
-  },
-  "devDependencies": {
-    "tsx": "^4.19.2",
-    "@types/react": "^18.3.1",
-    "@types/node": "^22.10.2",
-    "esbuild": "^0.24.2"
-  }
+    "name": "subway-builder-savefile-doctor",
+    "version": "1.0.0",
+    "description": "TUI tool for editing Subway Builder save files",
+    "type": "module",
+    "bin": {
+        "savefile-doctor": "./cli.js"
+    },
+    "scripts": {
+        "start": "tsx cli.tsx",
+        "dev": "tsx watch cli.tsx",
+        "build": "esbuild cli.tsx ui.tsx --bundle --platform=node --format=esm --outdir=dist"
+    },
+    "keywords": [
+        "subway-builder",
+        "savefile",
+        "editor",
+        "tui"
+    ],
+    "author": "Subway Builder Team",
+    "license": "MIT",
+    "dependencies": {
+        "ink": "^5.0.1",
+        "ink-text-input": "^6.0.0",
+        "ink-select-input": "^6.0.0",
+        "react": "^18.3.1",
+        "meow": "^13.2.0",
+        "chalk": "^5.3.0"
+    },
+    "devDependencies": {
+        "tsx": "^4.19.2",
+        "@types/react": "^18.3.1",
+        "@types/node": "^22.10.2",
+        "esbuild": "^0.24.2"
+    }
 }
