@@ -34,7 +34,9 @@
   "scripts": {
     "start": "tsx cli.tsx",
     "dev": "tsx watch cli.tsx",
-    "build": "esbuild cli.tsx ui.tsx --bundle --platform=node --format=esm --outdir=dist"
+    "build": "esbuild cli.tsx ui.tsx --bundle --platform=node --format=esm --outdir=dist",
+    "build:lib": "tsc && esbuild metro-loader.ts js-script-runner.ts --bundle --platform=node --format=esm --outdir=dist --external:pako --external:buffer",
+    "prepare": "npm run build:lib || true"
   },
   "repository": {
     "type": "git",
