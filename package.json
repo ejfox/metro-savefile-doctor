@@ -10,9 +10,23 @@
     "scripts"
   ],
   "exports": {
-    ".": "./dist/metro-loader.js",
-    "./metro-loader": "./dist/metro-loader.js",
-    "./js-script-runner": "./dist/js-script-runner.js"
+    ".": {
+      "types": "./dist/metro-loader.d.ts",
+      "default": "./dist/metro-loader.js"
+    },
+    "./metro-loader": {
+      "types": "./dist/metro-loader.d.ts",
+      "default": "./dist/metro-loader.js"
+    },
+    "./js-script-runner": {
+      "types": "./dist/js-script-runner.d.ts",
+      "default": "./dist/js-script-runner.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/*"]
+    }
   },
   "bin": {
     "metro-savefile-doctor": "./cli.js"
