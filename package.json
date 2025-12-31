@@ -21,7 +21,8 @@
     "./js-script-runner": {
       "types": "./dist/js-script-runner.d.ts",
       "default": "./dist/js-script-runner.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
