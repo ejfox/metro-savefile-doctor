@@ -10,12 +10,12 @@
  */
 
 // Configuration
-const DISTANCE_THRESHOLD = 0.0001; // ~11 meters at equator (adjust as needed)
+const DISTANCE_THRESHOLD = 0.00001; // ~1.11 meters at equator (adjust as needed)
 const MIN_COORDS = 2; // Tracks must have at least 2 coordinates
 
 log('=== NEAR-MISS TRACK DETECTION ===');
 log('Configuration:');
-log('  Distance threshold: ' + DISTANCE_THRESHOLD + ' coordinate units');
+log('  Distance threshold: ' + DISTANCE_THRESHOLD + ' coordinate units (~' + (DISTANCE_THRESHOLD * 111000).toFixed(2) + 'm at equator)');
 log('  Min coordinates per track: ' + MIN_COORDS);
 log('');
 

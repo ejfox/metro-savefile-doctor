@@ -77,7 +77,7 @@ savefile-doctor my-save.json --script scripts/detect-near-miss-tracks.js
 - Connection type (start-start, start-end, end-start, end-end)
 - Statistics on all near-miss connections found
 
-**Customization:** Edit `DISTANCE_THRESHOLD` variable to adjust sensitivity (default: 0.0001 coordinate units ≈ 11 meters).
+**Customization:** Edit `DISTANCE_THRESHOLD` variable to adjust sensitivity (default: 0.00001 coordinate units ≈ 1.11 meters).
 
 ---
 
