@@ -63,6 +63,22 @@ savefile-doctor my-save.json --script scripts/stats-report.js
 
 **Read-only:** This script doesn't modify your save file.
 
+### `detect-near-miss-tracks`
+
+Finds tracks that are very close together but not actually connected (often caused by misclicks).
+
+```bash
+savefile-doctor my-save.json --script scripts/detect-near-miss-tracks.js
+```
+
+**Read-only:** This script doesn't modify your save file. It reports:
+- Track pairs that are close but not connected
+- Distance between track endpoints (in coordinate units and approximate meters)
+- Connection type (start-start, start-end, end-start, end-end)
+- Statistics on all near-miss connections found
+
+**Customization:** Edit `DISTANCE_THRESHOLD` variable to adjust sensitivity (default: 0.0001 coordinate units ≈ 11 meters).
+
 ---
 
 ## Writing JavaScript Scripts
