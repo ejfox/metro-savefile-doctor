@@ -28,7 +28,9 @@ if (tracks.length === 0) {
     log('');
 
     // Helper function to calculate distance between two points
-    // Uses simple Euclidean distance for small geographic areas
+    // Uses simple Euclidean distance in coordinate space (degrees)
+    // This is approximate but sufficient for small geographic areas
+    // For coordinate differences in degrees, multiply by ~111,000 to get meters at equator
     function distance(point1, point2) {
         const dx = point1[0] - point2[0];
         const dy = point1[1] - point2[1];
@@ -135,8 +137,8 @@ if (tracks.length === 0) {
         
         // Statistics
         const avgDistance = nearMisses.reduce((sum, m) => sum + m.distance, 0) / nearMisses.length;
-        const minDistance = nearMisses[0].distance;
-        const maxDistance = nearMisses[nearMisses.length - 1].distance;
+        const minDistance = Math.min(...nearMisses.map(m => m.distance));
+        const maxDistance = Math.max(...nearMisses.map(m => m.distance));
         
         log('=== STATISTICS ===');
         log('Total near-misses: ' + nearMisses.length);
