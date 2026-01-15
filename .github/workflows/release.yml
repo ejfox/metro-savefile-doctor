@@ -78,6 +78,50 @@ jobs:
             - **macOS**: .dmg (Apple Silicon & Intel)
             - **Windows**: .msi installer
             - **Linux**: .AppImage or .deb
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
+
+  notify-discord:
+    needs: release
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Post to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/${VERSION}"
+
+          curl -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"🚇 Metro Savefile Doctor ${VERSION}\",
+                \"description\": \"New release is live! Cross-platform desktop app for editing Metro Maker save files.\",
+                \"url\": \"${RELEASE_URL}\",
+                \"color\": 65535,
+                \"fields\": [
+                  {
+                    \"name\": \"✨ Features\",
+                    \"value\": \"• Drag & drop .metro/.json saves\\n• Quick edit money, time, trains\\n• Analysis reports & auto-fix\\n• Auto-backup on import\\n• Crackintro aesthetic\",
+                    \"inline\": false
+                  },
+                  {
+                    \"name\": \"📦 Downloads\",
+                    \"value\": \"**macOS** → .dmg (Apple Silicon & Intel)\\n**Windows** → .msi installer\\n**Linux** → .AppImage / .deb\",
+                    \"inline\": false
+                  },
+                  {
+                    \"name\": \"🔗 Release Page\",
+                    \"value\": \"[Download ${VERSION}](${RELEASE_URL})\",
+                    \"inline\": false
+                  }
+                ],
+                \"footer\": {
+                  \"text\": \"Metro Savefile Doctor • github.com/ejfox/metro-savefile-doctor\"
+                },
+                \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+              }]
+            }" \
+            "$DISCORD_WEBHOOK"
