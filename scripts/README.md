@@ -79,6 +79,25 @@ savefile-doctor my-save.json --script scripts/detect-near-miss-tracks.js
 
 **Customization:** Edit `DISTANCE_THRESHOLD` variable to adjust sensitivity (default: 0.00001 coordinate units ≈ 1.11 meters).
 
+### `fix-near-miss-tracks`
+
+Automatically fixes tracks that are very close together but not actually connected by snapping their endpoints together.
+
+```bash
+savefile-doctor my-save.json --script scripts/fix-near-miss-tracks.js
+```
+
+**Modifies save file:** This script automatically repairs near-miss connections by:
+- Detecting track pairs within the distance threshold
+- Snapping one track's endpoint to match the other's endpoint
+- Preferring to modify the track with fewer coordinates (less impact on geometry)
+- Reporting all fixes made
+
+**Configuration:**
+- `DISTANCE_THRESHOLD` - Maximum distance to consider as near-miss (default: 0.00001 ≈ 1.11 meters)
+- `AUTO_FIX` - Enable/disable automatic repair (default: true, set false for dry-run)
+- `MIN_COORDS` - Minimum coordinates per track (default: 2)
+
 ---
 
 ## Writing JavaScript Scripts
