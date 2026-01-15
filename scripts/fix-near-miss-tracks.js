@@ -183,28 +183,19 @@ if (tracks.length === 0) {
                 
                 // Determine which endpoint to modify based on connection type
                 const connectionType = miss.connectionType;
-                let targetCoord;
                 
                 if (connectionType === 'start-start') {
-                    // Match starts together - choose track2's start as target
-                    if (trackToModify === track1) {
-                        trackToModify.coords[0] = [trackToMatchTo.coords[0][0], trackToMatchTo.coords[0][1]];
-                        targetCoord = trackToMatchTo.coords[0];
-                    } else {
-                        trackToModify.coords[0] = [trackToMatchTo.coords[0][0], trackToMatchTo.coords[0][1]];
-                        targetCoord = trackToMatchTo.coords[0];
-                    }
-                    log('  Action: Snapped start endpoint');
+                    // Match starts together - snap to trackToMatchTo's start
+                    trackToModify.coords[0] = [trackToMatchTo.coords[0][0], trackToMatchTo.coords[0][1]];
+                    log('  Action: Snapped start endpoints');
                 } else if (connectionType === 'start-end') {
                     // Match track1 start to track2 end
                     if (trackToModify === track1) {
                         trackToModify.coords[0] = [trackToMatchTo.coords[trackToMatchTo.coords.length - 1][0], 
                                                     trackToMatchTo.coords[trackToMatchTo.coords.length - 1][1]];
-                        targetCoord = trackToMatchTo.coords[trackToMatchTo.coords.length - 1];
                     } else {
                         trackToModify.coords[trackToModify.coords.length - 1] = [trackToMatchTo.coords[0][0], 
                                                                                   trackToMatchTo.coords[0][1]];
-                        targetCoord = trackToMatchTo.coords[0];
                     }
                     log('  Action: Snapped endpoints together');
                 } else if (connectionType === 'end-start') {
@@ -212,24 +203,15 @@ if (tracks.length === 0) {
                     if (trackToModify === track1) {
                         trackToModify.coords[trackToModify.coords.length - 1] = [trackToMatchTo.coords[0][0], 
                                                                                   trackToMatchTo.coords[0][1]];
-                        targetCoord = trackToMatchTo.coords[0];
                     } else {
                         trackToModify.coords[0] = [trackToMatchTo.coords[trackToMatchTo.coords.length - 1][0], 
                                                     trackToMatchTo.coords[trackToMatchTo.coords.length - 1][1]];
-                        targetCoord = trackToMatchTo.coords[trackToMatchTo.coords.length - 1];
                     }
                     log('  Action: Snapped endpoints together');
                 } else if (connectionType === 'end-end') {
-                    // Match ends together
-                    if (trackToModify === track1) {
-                        trackToModify.coords[trackToModify.coords.length - 1] = [trackToMatchTo.coords[trackToMatchTo.coords.length - 1][0], 
-                                                                                  trackToMatchTo.coords[trackToMatchTo.coords.length - 1][1]];
-                        targetCoord = trackToMatchTo.coords[trackToMatchTo.coords.length - 1];
-                    } else {
-                        trackToModify.coords[trackToModify.coords.length - 1] = [trackToMatchTo.coords[trackToMatchTo.coords.length - 1][0], 
-                                                                                  trackToMatchTo.coords[trackToMatchTo.coords.length - 1][1]];
-                        targetCoord = trackToMatchTo.coords[trackToMatchTo.coords.length - 1];
-                    }
+                    // Match ends together - snap to trackToMatchTo's end
+                    trackToModify.coords[trackToModify.coords.length - 1] = [trackToMatchTo.coords[trackToMatchTo.coords.length - 1][0], 
+                                                                              trackToMatchTo.coords[trackToMatchTo.coords.length - 1][1]];
                     log('  Action: Snapped end endpoints');
                 }
                 
