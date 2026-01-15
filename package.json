@@ -1,8 +1,9 @@
 {
   "name": "metro-savefile-doctor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "TUI tool for editing Subway Builder save files",
   "type": "module",
+  "private": true,
   "files": [
     "dist",
     "metro-loader.ts",
@@ -37,7 +38,10 @@
     "dev": "tsx watch cli.tsx",
     "build": "esbuild cli.tsx ui.tsx --bundle --platform=node --format=esm --outdir=dist",
     "build:lib": "tsc && esbuild metro-loader.ts js-script-runner.ts --bundle --platform=node --format=esm --outdir=dist --external:pako --external:buffer",
-    "prepare": "npm run build:lib || true"
+    "prepare": "npm run build:lib || true",
+    "build:core": "pnpm --filter @metro-savefile-doctor/core build",
+    "tauri:dev": "pnpm build:core && pnpm --filter metro-savefile-doctor-app tauri dev",
+    "tauri:build": "pnpm build:core && pnpm --filter metro-savefile-doctor-app tauri build"
   },
   "repository": {
     "type": "git",

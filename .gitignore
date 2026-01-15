@@ -13,3 +13,9 @@ dist/
 # Logs
 *.log
 npm-debug.log*
+
+# Rust build artifacts
+tauri-app/src-tauri/target/
+
+# Tauri generated schemas (large and auto-generated)
+tauri-app/src-tauri/gen/
