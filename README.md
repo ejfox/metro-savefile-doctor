@@ -2,6 +2,17 @@
 
 A beautiful TUI (Text User Interface) tool for editing Subway Builder save files.
 
+## Desktop App
+
+**[Download the latest release](https://github.com/ejfox/metro-savefile-doctor/releases/latest)**
+
+Cross-platform desktop app with a crackintro aesthetic:
+- **macOS**: `.dmg` (Apple Silicon & Intel)
+- **Windows**: `.msi` installer
+- **Linux**: `.AppImage` / `.deb` / `.rpm`
+
+Features drag & drop, quick editing, analysis reports, and auto-backup.
+
 ## Features
 
 - 💰 **Edit Money** - Give yourself unlimited cash
