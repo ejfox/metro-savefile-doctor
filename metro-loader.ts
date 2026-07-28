@@ -264,7 +264,7 @@ export async function writeMetroSave(filepath: string, saveData: MetroSaveData):
     header.writeUInt32LE(calculateChecksum(compressed), 912);
 
     // Combine all parts
-    const parts = [header, autosaveIndexBuffer];
+    const parts: Uint8Array[] = [header, autosaveIndexBuffer];
     if (thumbnailSize > 0) {
         parts.push(thumbnail);
     }
