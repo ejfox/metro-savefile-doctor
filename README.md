@@ -148,6 +148,11 @@ Built with:
 - [Chalk](https://github.com/chalk/chalk) - Terminal colors
 - [Meow](https://github.com/sindresorhus/meow) - CLI argument parsing
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md). Latest: **1.2.0** — GeoJSON/KML/KMZ/CSV export
+and lossless `.metro` writes.
+
 ## License
 
 MIT
