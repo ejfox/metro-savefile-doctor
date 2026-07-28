@@ -19,9 +19,36 @@ Features drag & drop, quick editing, analysis reports, and auto-backup.
 - ⏱️ **Edit Game Time** - Change elapsed simulation time
 - 🚆 **Edit Train Count** - Change owned train count
 - 🎫 **Edit Transit Cost** - Change ticket price for riders
+- 🗺️ **Export** - GeoJSON, KML, KMZ, and CSV (stations / routes / tracks)
 - 💾 **Auto Backup** - Creates backups before modifying
 - 📦 **Binary Format Support** - Handles both JSON and .metro binary saves
 - ✨ **Beautiful TUI** - Interactive terminal interface with colors
+
+### Lossless writes
+
+The `.metro` writer preserves the **entire** save bundle — main save, all
+autosaves (with full data), timelapse frames, viewport, version, and the
+thumbnail — and only rewrites the fields you edit. It also recomputes the header
+stats so the game's home menu shows your edited money/stations immediately.
+
+## Export
+
+Turn any save into a GIS or spreadsheet file. Stations become points, tracks and
+routes become lines (routes are assembled from their track path and keep their
+line color).
+
+```bash
+# tsx or bun
+npm run export -- ~/saves/my-city.metro geojson
+npm run export -- ~/saves/my-city.metro kml
+npm run export -- ~/saves/my-city.metro kmz            # zipped KML for Google Earth
+npm run export -- ~/saves/my-city.metro csv-stations
+npm run export -- ~/saves/my-city.metro csv-routes ./routes.csv   # explicit output path
+```
+
+Formats: `geojson` · `kml` · `kmz` · `csv-stations` · `csv-routes` · `csv-tracks`.
+Open GeoJSON at [geojson.io](https://geojson.io) or in QGIS; open KML/KMZ in
+Google Earth. In the desktop app, use the **EXPORT** panel.
 
 ## Installation
 

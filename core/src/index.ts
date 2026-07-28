@@ -15,6 +15,18 @@ export {
   isMetroFormat,
 } from './metro-loader.js';
 
+// Exporters (GeoJSON / KML / KMZ / CSV)
+export {
+  toGeoJSON,
+  toKML,
+  toKMZ,
+  stationsToCSV,
+  routesToCSV,
+  tracksToCSV,
+  exportSave,
+} from './exporters.js';
+export type { ExportFormat } from './exporters.js';
+
 // Analysis functions
 export { analyzeRoutes } from './analysis/route-analysis.js';
 export type { RouteAnalysisResult, RouteInfo, TrainsByRoute } from './analysis/route-analysis.js';

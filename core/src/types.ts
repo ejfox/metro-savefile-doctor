@@ -7,6 +7,7 @@ export interface SaveStats {
   routes: number;
   trains: number;
   money: number;
+  elapsedSeconds: number;
 }
 
 export interface MetroSaveData {
@@ -16,8 +17,15 @@ export interface MetroSaveData {
   gameSessionId: string;
   stats: SaveStats;
   data: SaveGameData;
+  /** Full decompressed bundle { mainSave, autosaves, ... } — preserved for lossless writes */
+  _bundle?: any;
+  /** Whether the file used the mainSave/autosaves bundle shape */
+  _isBundle?: boolean;
   _headerBuffer?: Uint8Array;
+  /** Lightweight autosave index (metadata region, preserved verbatim) */
   _autosaveIndex?: any[];
+  /** Preserved thumbnail PNG bytes (empty/undefined if none) */
+  _thumbnail?: Uint8Array;
 }
 
 export interface SaveGameData {

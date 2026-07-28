@@ -70,7 +70,9 @@ jobs:
             ### Features
             - Drag & drop .metro and .json save files
             - Quick edit money, time, train count
+            - Export to GeoJSON / KML / KMZ / CSV
             - Analysis reports (routes, orphans, coverage)
+            - Lossless .metro writes (preserves autosaves, timelapse & thumbnail)
             - Auto-backup on import
             - Crackintro aesthetic with neon glow effects
 

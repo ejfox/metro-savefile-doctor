@@ -91,9 +91,9 @@ function parseHeader(buffer: ArrayBuffer): HeaderData {
   const gameSessionId = readString(view, 328, 64);
   const statsJson = readString(view, 392, 512);
 
-  let stats: SaveStats = { stations: 0, routes: 0, trains: 0, money: 0 };
+  let stats: SaveStats = { stations: 0, routes: 0, trains: 0, money: 0, elapsedSeconds: 0 };
   try {
-    stats = JSON.parse(statsJson);
+    stats = { elapsedSeconds: 0, ...JSON.parse(statsJson) };
   } catch {
     console.warn('Failed to parse stats from header');
   }
@@ -115,6 +115,20 @@ function parseHeader(buffer: ArrayBuffer): HeaderData {
 }
 
 /**
+ * Recompute header stats from game data.
+ * Mirrors the game's MetroFormat.extractStats so the home menu (which reads
+ * stats straight from the header without decompressing) shows edited values.
+ */
+function computeStats(data: any): SaveStats {
+  const stations = Array.isArray(data?.stations) ? data.stations.length : 0;
+  const routes = Array.isArray(data?.routes) ? data.routes.length : 0;
+  const trains = Array.isArray(data?.trains) ? data.trains.length : 0;
+  const money = typeof data?.money === 'number' ? data.money : 0;
+  const elapsedSeconds = typeof data?.elapsedSeconds === 'number' ? data.elapsedSeconds : 0;
+  return { stations, routes, trains, money, elapsedSeconds };
+}
+
+/**
  * Parse a .metro save from ArrayBuffer
  */
 export function parseMetroBuffer(buffer: ArrayBuffer): MetroSaveData {
@@ -128,7 +142,7 @@ export function parseMetroBuffer(buffer: ArrayBuffer): MetroSaveData {
 
   const header = parseHeader(buffer.slice(0, HEADER_SIZE));
 
-  // Read autosave index
+  // Read autosave index (lightweight metadata region — preserved verbatim on write)
   let autosaveIndex: any[] = [];
   if (header.autosaveIndexSize > 0) {
     const indexBytes = uint8.slice(
@@ -142,6 +156,12 @@ export function parseMetroBuffer(buffer: ArrayBuffer): MetroSaveData {
     }
   }
 
+  // Preserve the thumbnail bytes so they survive a round-trip
+  let thumbnail = new Uint8Array(0);
+  if (header.thumbnailSize > 0) {
+    thumbnail = uint8.slice(header.thumbnailOffset, header.thumbnailOffset + header.thumbnailSize);
+  }
+
   // Read and decompress game data
   const compressedData = uint8.slice(
     header.gameDataOffset,
@@ -151,8 +171,10 @@ export function parseMetroBuffer(buffer: ArrayBuffer): MetroSaveData {
   const decompressed = pako.inflate(compressedData);
   const bundle = JSON.parse(new TextDecoder().decode(decompressed));
 
-  // Extract main save data
-  const gameData = bundle.mainSave || bundle;
+  // Extract main save data (bundle format uses mainSave; v1 saves are flat)
+  const isBundle = !!bundle.mainSave;
+  const mainSave = isBundle ? bundle.mainSave : bundle;
+  const data = mainSave.data || mainSave;
 
   return {
     name: header.name,
@@ -160,81 +182,128 @@ export function parseMetroBuffer(buffer: ArrayBuffer): MetroSaveData {
     timestamp: header.timestamp,
     gameSessionId: header.gameSessionId,
     stats: header.stats,
-    data: gameData.data || gameData,
+    data,
+    _bundle: bundle,
+    _isBundle: isBundle,
     _headerBuffer: uint8.slice(0, HEADER_SIZE),
     _autosaveIndex: autosaveIndex,
+    _thumbnail: thumbnail,
   };
 }
 
 /**
  * Serialize MetroSaveData to ArrayBuffer (.metro format)
+ *
+ * LOSSLESS: preserves the full bundle (autosaves, timelapse, viewport, version)
+ * and the thumbnail, mutating only edited fields.
  */
 export function serializeMetroSave(saveData: MetroSaveData): ArrayBuffer {
-  // Reconstruct bundle
-  const bundle = {
-    mainSave: {
-      id: saveData.gameSessionId,
-      name: saveData.name,
-      timestamp: saveData.timestamp,
-      cityCode: saveData.cityCode,
-      stats: saveData.stats,
-      data: saveData.data,
-    },
-    autosaves: saveData._autosaveIndex || [],
-  };
+  // Recompute stats so the header matches the (possibly edited) game data
+  const stats = computeStats(saveData.data);
+
+  // Reuse the full preserved bundle, mutating only what we edited
+  let bundle: any;
+  if (saveData._bundle && saveData._isBundle && saveData._bundle.mainSave) {
+    bundle = saveData._bundle;
+    bundle.mainSave.data = saveData.data;
+    bundle.mainSave.stats = stats;
+    bundle.mainSave.name = saveData.name;
+    bundle.mainSave.timestamp = saveData.timestamp;
+    bundle.mainSave.cityCode = saveData.cityCode;
+    if (saveData.gameSessionId) {
+      bundle.mainSave.gameSessionId = saveData.gameSessionId;
+    }
+  } else if (saveData._bundle) {
+    // v1 flat save
+    bundle = saveData._bundle;
+    if (bundle.data) {
+      bundle.data = saveData.data;
+    } else {
+      bundle = saveData.data;
+    }
+  } else {
+    // Last-resort fallback (constructed without reading)
+    bundle = {
+      mainSave: {
+        id: saveData.gameSessionId,
+        name: saveData.name,
+        timestamp: saveData.timestamp,
+        cityCode: saveData.cityCode,
+        gameSessionId: saveData.gameSessionId,
+        stats,
+        data: saveData.data,
+      },
+      autosaves: [],
+    };
+  }
 
   // Compress bundle
   const bundleJson = JSON.stringify(bundle);
   const compressed = pako.gzip(new TextEncoder().encode(bundleJson));
 
-  // Prepare autosave index
-  const autosaveIndexJson = JSON.stringify(saveData._autosaveIndex || []);
-  const autosaveIndexBuffer = new TextEncoder().encode(autosaveIndexJson);
+  // Autosave index region (preserved verbatim)
+  const autosaveIndex = saveData._autosaveIndex || [];
+  const autosaveIndexBuffer = new TextEncoder().encode(JSON.stringify(autosaveIndex));
 
-  // Calculate offsets
+  // Thumbnail (preserved verbatim)
+  const thumbnail =
+    saveData._thumbnail && saveData._thumbnail.length > 0 ? saveData._thumbnail : new Uint8Array(0);
+
+  // Calculate offsets: [header][index][thumbnail][gameData]
   const autosaveIndexOffset = HEADER_SIZE;
   const autosaveIndexSize = autosaveIndexBuffer.length;
-  const gameDataOffset = autosaveIndexOffset + autosaveIndexSize;
+  const thumbnailOffset = autosaveIndexOffset + autosaveIndexSize;
+  const thumbnailSize = thumbnail.length;
+  const gameDataOffset = thumbnailOffset + thumbnailSize;
   const gameDataSize = compressed.length;
 
-  // Create header
+  // Reuse existing header (keeps tutorial flag, max-autosaves, reserved bytes) or make a fresh one
   const header = saveData._headerBuffer
     ? new Uint8Array(saveData._headerBuffer)
     : new Uint8Array(HEADER_SIZE);
+  const isFreshHeader = !saveData._headerBuffer;
 
   const headerView = new DataView(header.buffer, header.byteOffset, header.byteLength);
 
-  // Write magic
-  const encoder = new TextEncoder();
-  const magicBytes = encoder.encode(MAGIC);
-  header.set(magicBytes, 0);
+  // Magic
+  header.set(new TextEncoder().encode(MAGIC), 0);
 
-  // Write offsets
+  // Offsets
   headerView.setUint32(8, autosaveIndexOffset, true);
   headerView.setUint32(12, autosaveIndexSize, true);
+  headerView.setUint32(16, thumbnailOffset, true);
+  headerView.setUint32(20, thumbnailSize, true);
   headerView.setUint32(24, gameDataOffset, true);
   headerView.setUint32(28, gameDataSize, true);
 
-  // Write timestamp
+  // Timestamp
   const timestamp = saveData.timestamp;
   headerView.setUint32(32, timestamp & 0xffffffff, true);
   headerView.setInt32(36, Math.floor(timestamp / 0x100000000), true);
 
-  // Write strings
+  // Strings
   writeString(header, 40, saveData.name, 256);
   writeString(header, 296, saveData.cityCode, 32);
   writeString(header, 328, saveData.gameSessionId, 64);
-  writeString(header, 392, JSON.stringify(saveData.stats), 512);
+  writeString(header, 392, JSON.stringify(stats), 512);
 
-  // Calculate and write checksum
-  const checksum = calculateChecksum(compressed);
-  headerView.setUint32(912, checksum, true);
+  // Autosave count + max autosaves (only default max on a brand-new header)
+  headerView.setUint32(904, autosaveIndex.length, true);
+  if (isFreshHeader) {
+    headerView.setUint32(908, 10, true);
+  }
+
+  // Checksum of compressed data
+  headerView.setUint32(912, calculateChecksum(compressed), true);
 
   // Combine all parts
-  const totalSize = HEADER_SIZE + autosaveIndexSize + gameDataSize;
+  const totalSize = HEADER_SIZE + autosaveIndexSize + thumbnailSize + gameDataSize;
   const result = new Uint8Array(totalSize);
   result.set(header, 0);
   result.set(autosaveIndexBuffer, autosaveIndexOffset);
+  if (thumbnailSize > 0) {
+    result.set(thumbnail, thumbnailOffset);
+  }
   result.set(compressed, gameDataOffset);
 
   return result.buffer;
@@ -250,8 +319,10 @@ export function parseJsonSave(json: string): MetroSaveData {
     cityCode: data.cityCode || 'unknown',
     timestamp: data.timestamp || Date.now(),
     gameSessionId: data.gameSessionId || crypto.randomUUID(),
-    stats: data.stats || { stations: 0, routes: 0, trains: 0, money: 0 },
+    stats: data.stats || { stations: 0, routes: 0, trains: 0, money: 0, elapsedSeconds: 0 },
     data: data.data || data,
+    _bundle: data,
+    _isBundle: !!data.mainSave,
   };
 }
 

@@ -3,6 +3,7 @@
   import ScrollingCredits from './lib/components/ScrollingCredits.svelte';
   import DropZone from './lib/components/DropZone.svelte';
   import QuickEditPanel from './lib/components/QuickEditPanel.svelte';
+  import ExportPanel from './lib/components/ExportPanel.svelte';
   import AnalysisPanel from './lib/components/AnalysisPanel.svelte';
   import SaveInfoCard from './lib/components/SaveInfoCard.svelte';
   import Toast from './lib/components/Toast.svelte';
@@ -34,6 +35,7 @@
         <aside class="sidebar">
           <SaveInfoCard />
           <QuickEditPanel />
+          <ExportPanel />
         </aside>
         <section class="main-panel">
           <AnalysisPanel />

@@ -19,3 +19,4 @@ tauri-app/src-tauri/target/
 
 # Tauri generated schemas (large and auto-generated)
 tauri-app/src-tauri/gen/
+core/bun.lock

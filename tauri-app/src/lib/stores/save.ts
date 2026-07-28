@@ -5,8 +5,8 @@
 import { writable, derived, get } from 'svelte/store';
 import { writeFile, copyFile } from '@tauri-apps/plugin-fs';
 import { save as saveDialog } from '@tauri-apps/plugin-dialog';
-import { serializeMetroSave, serializeJsonSave } from '@metro-savefile-doctor/core';
-import type { MetroSaveData } from '@metro-savefile-doctor/core';
+import { serializeMetroSave, serializeJsonSave, exportSave } from '@metro-savefile-doctor/core';
+import type { MetroSaveData, ExportFormat } from '@metro-savefile-doctor/core';
 
 export const filePath = writable<string | null>(null);
 export const fileName = writable<string | null>(null);
@@ -64,6 +64,33 @@ export function markSaved() {
   saveData.subscribe(s => {
     if (s) originalData.set(JSON.parse(JSON.stringify(s)));
   })();
+}
+
+// Export the loaded save to a GIS / spreadsheet format
+const EXPORT_EXT: Record<ExportFormat, string> = {
+  geojson: 'geojson',
+  kml: 'kml',
+  kmz: 'kmz',
+  'csv-stations': 'stations.csv',
+  'csv-routes': 'routes.csv',
+  'csv-tracks': 'tracks.csv',
+};
+
+export async function exportTo(format: ExportFormat): Promise<boolean> {
+  const data = get(saveData);
+  if (!data) return false;
+
+  const baseName = (get(fileName) || data.name || 'save').replace(/\.(metro|json)$/i, '');
+  const outPath = await saveDialog({
+    defaultPath: `${baseName}.${EXPORT_EXT[format]}`,
+    filters: [{ name: format.toUpperCase(), extensions: [EXPORT_EXT[format].split('.').pop() as string] }],
+  });
+  if (!outPath) return false; // cancelled
+
+  const result = exportSave(data, format);
+  const bytes = typeof result === 'string' ? new TextEncoder().encode(result) : result;
+  await writeFile(outPath, bytes);
+  return true;
 }
 
 export function resetSave() {
